@@ -14,3 +14,6 @@ model
 
 log
 *.csv
+
+# vscode setting
+.vscode
