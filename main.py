@@ -11,7 +11,7 @@ from torch.nn.utils import clip_grad_norm
 from torch.utils.data.sampler import SequentialSampler
 
 from dataset import TSNDataSet
-from models import TSN
+from models import STSNN
 from transforms import *
 from opts import parser
 import datasets_video
@@ -32,7 +32,7 @@ def main():
                                 'group%d'% args.num_segments, '%df1c'% args.num_motion])
     print('storing name: ' + args.store_name)
 
-    model = TSN(num_class, args.num_segments, args.modality,
+    model = STSNN(num_class, args.num_segments, args.modality,
                 base_model=args.arch,
                 consensus_type=args.consensus_type,
                 dropout=args.dropout, num_motion=args.num_motion,

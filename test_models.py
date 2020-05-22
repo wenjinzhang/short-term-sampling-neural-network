@@ -6,7 +6,7 @@ import torch.nn.parallel
 import torch.optim
 from sklearn.metrics import confusion_matrix
 from dataset import TSNDataSet
-from models import TSN
+from models import STSNN
 from transforms import *
 from ops import ConsensusModule
 import datasets_video
@@ -72,7 +72,7 @@ def accuracy(output, target, topk=(1,)):
 categories, args.train_list, args.val_list, args.root_path, prefix = datasets_video.return_dataset(args.dataset, args.modality)
 num_class = len(categories)
 
-net = TSN(num_class, args.test_segments if args.consensus_type in ['MLP'] else 1, args.modality,
+net = STSNN(num_class, args.test_segments if args.consensus_type in ['MLP'] else 1, args.modality,
           base_model=args.arch,
           consensus_type=args.consensus_type,
           img_feature_dim=args.img_feature_dim,

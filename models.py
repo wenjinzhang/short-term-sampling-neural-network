@@ -7,13 +7,13 @@ from torch.nn.init import normal, constant
 import MLPmodule
 import LSTMmodule
 
-class TSN(nn.Module):
+class STSNN(nn.Module):
     def __init__(self, num_class, num_segments, modality,
                  base_model='resnet101', new_length=None,
                  consensus_type='avg', before_softmax=True, num_motion=3,
                  dropout=0.8,img_feature_dim=256, dataset='jester',
                  crop_num=1, partial_bn=True, print_spec=True):
-        super(TSN, self).__init__()
+        super(STSNN, self).__init__()
         self.modality = modality
         self.num_segments = num_segments
         self.num_motion = num_motion
@@ -39,8 +39,8 @@ class TSN(nn.Module):
             self.new_length = new_length
         if print_spec == True:
             print(("""
-    Initializing TSN with base model: {}.
-    TSN Configurations:
+    Initializing STSNN with base model: {}.
+    STSNN Configurations:
         input_modality:     {}
         num_segments:       {}
         new_length:         {}
@@ -88,10 +88,13 @@ class TSN(nn.Module):
         else:
             setattr(self.base_model, self.base_model.last_layer_name, nn.Dropout(p=self.dropout))
             if self.consensus_type == 'MLP':
-                # set the MFFs feature dimension
+                # set the feature dimension
+                self.new_fc = nn.Linear(feature_dim, self.img_feature_dim)
+            elif self.consensus_type == 'LSTM':
+                # set the feature dimension
                 self.new_fc = nn.Linear(feature_dim, self.img_feature_dim)
             else:
-                # the default consensus types in TSN
+                # the default consensus types
                 self.new_fc = nn.Linear(feature_dim, num_class)
 
         std = 0.001
@@ -159,7 +162,7 @@ class TSN(nn.Module):
         Override the default train() to freeze the BN parameters
         :return:
         """
-        super(TSN, self).train(mode)
+        super(STSNN, self).train(mode)
         count = 0
         if self._enable_pbn:
             print("Freezing BatchNorm2D except the first one.")
